@@ -1,182 +1,74 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="th">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SMART FARM FINANCE AI</title>
-
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
-
-<style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0f172a;
-    color:white;
-}
-
-header{
-    background:#14532d;
-    padding:15px;
-    text-align:center;
-    font-weight:bold;
-}
-
-.container{
-    padding:10px;
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:10px;
-}
-
-.card{
-    background:#111827;
-    padding:12px;
-    border-radius:10px;
-}
-
-input,select,button{
-    width:100%;
-    padding:8px;
-    margin-top:5px;
-}
-
-button{
-    background:#22c55e;
-    border:0;
-    color:white;
-}
-
-.ai{
-    color:#38bdf8;
-    font-weight:bold;
-}
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d1713" />
+  <title>Smart Farm OS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+  <style>
+    :root{--bg:#0d1713;--panel:#14211b;--panel-2:#192a22;--line:#294238;--text:#edf5ef;--muted:#92a69b;--green:#81d49b;--green-strong:#35b86b;--amber:#f4bd67;--red:#ee8c86;--blue:#83c8d8;--radius:18px;--shadow:0 18px 60px #00000026}
+    *{box-sizing:border-box} body{margin:0;background:radial-gradient(circle at 78% -10%,#234b38 0,#0d1713 42%);color:var(--text);font-family:Manrope,system-ui,sans-serif;min-height:100vh} button,input,select{font:inherit} button{cursor:pointer}
+    .shell{display:grid;grid-template-columns:244px minmax(0,1fr);min-height:100vh}.sidebar{border-right:1px solid var(--line);padding:25px 18px;display:flex;flex-direction:column;gap:28px;background:#0d1713cc;backdrop-filter:blur(16px)}
+    .brand{display:flex;align-items:center;gap:11px;padding:2px 8px}.logo{width:35px;height:35px;display:grid;place-items:center;border-radius:11px;background:var(--green);color:#102419;font-size:20px}.brand strong{display:block;font-size:14px;letter-spacing:.08em}.brand small{display:block;color:var(--muted);font-size:10px;margin-top:2px;letter-spacing:.12em}
+    .nav{display:grid;gap:6px}.nav button{border:0;background:transparent;color:var(--muted);padding:12px 13px;border-radius:11px;text-align:left;display:flex;align-items:center;gap:11px;font-weight:600}.nav button:hover,.nav button.active{background:#1c3328;color:var(--text)}.nav button.active{box-shadow:inset 3px 0 var(--green)}.nav svg{width:17px;height:17px}.side-note{margin-top:auto;border:1px solid var(--line);border-radius:15px;padding:13px;color:var(--muted);font-size:11px;line-height:1.6}.side-note b{display:block;color:var(--green);font-family:'DM Mono';font-size:11px;margin-bottom:4px}
+    main{padding:30px clamp(18px,4vw,54px);max-width:1500px;width:100%;margin:0 auto}.topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:20px;margin-bottom:31px}.eyebrow{font-family:'DM Mono';text-transform:uppercase;letter-spacing:.15em;color:var(--green);font-size:11px}.topbar h1{font-size:30px;letter-spacing:-.04em;margin:8px 0 5px}.topbar p{color:var(--muted);font-size:13px;margin:0}.actions{display:flex;gap:10px;align-items:center}.status-pill{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:999px;padding:9px 13px;color:var(--muted);font-size:12px}.dot{width:8px;height:8px;border-radius:50%;background:var(--amber);box-shadow:0 0 0 4px #f4bd6720}.dot.online{background:var(--green-strong);box-shadow:0 0 0 4px #35b86b20}.dot.offline{background:var(--red);box-shadow:0 0 0 4px #ee8c8620}.ghost{border:1px solid var(--line);background:transparent;color:var(--text);padding:9px 13px;border-radius:10px}.ghost:hover{border-color:var(--green);color:var(--green)}
+    .grid{display:grid;gap:16px}.metrics{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:16px}.panel{background:linear-gradient(145deg,#18281f,#122019);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:var(--shadow)}.metric{min-height:132px}.metric .label{display:flex;justify-content:space-between;color:var(--muted);font-size:12px}.metric .value{font-size:30px;font-weight:800;letter-spacing:-.05em;margin:18px 0 4px}.metric .meta{font-size:11px;color:var(--muted)}.accent{color:var(--green)}.warning{color:var(--amber)}
+    .section-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px}.section-title h2{font-size:17px;letter-spacing:-.025em;margin:0}.section-title span{font-size:11px;color:var(--muted);font-family:'DM Mono'}.main-grid{grid-template-columns:minmax(0,1.5fr) minmax(300px,1fr);align-items:start}.relay-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.relay{background:#102019;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;justify-content:space-between;align-items:center}.relay h3{font-size:14px;margin:0 0 4px}.relay p{font-size:11px;color:var(--muted);margin:0;font-family:'DM Mono'}.switch{width:48px;height:27px;border:0;border-radius:99px;background:#294038;padding:3px;transition:.18s}.switch i{display:block;width:21px;height:21px;background:#91a89a;border-radius:50%;transition:.18s}.switch.on{background:var(--green-strong)}.switch.on i{background:#fff;transform:translateX(21px)}.switch:disabled{opacity:.45;cursor:not-allowed}.pending{font-size:10px;color:var(--amber);display:block;margin-top:5px}
+    .side-stack{display:grid;gap:16px}.device-row,.sensor-row,.finance-row{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #29423899;padding:12px 0}.device-row:last-child,.sensor-row:last-child,.finance-row:last-child{border:0;padding-bottom:0}.device-row:first-child,.sensor-row:first-child,.finance-row:first-child{padding-top:0}.key{font-size:12px;color:var(--muted)}.device-value{font-family:'DM Mono';font-size:12px}.big-read{font-size:30px;font-weight:800}.sensor-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}.sensor-unit{font-size:12px;color:var(--muted);font-weight:500}.schedule{margin-top:16px}.form-row{display:flex;gap:10px;align-items:end}.field{display:grid;gap:7px;flex:1}.field label{font-size:11px;color:var(--muted)}input,select{width:100%;background:#0e1a14;color:var(--text);border:1px solid var(--line);border-radius:9px;padding:10px 11px;outline:none}input:focus,select:focus{border-color:var(--green)}.primary{border:0;background:var(--green);color:#102419;border-radius:9px;padding:10px 15px;font-weight:800}.primary:hover{filter:brightness(1.07)}.primary:active,.ghost:active,.switch:active{transform:scale(.97)}
+    .finance{margin-top:16px}.finance-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:20px}.money{font-size:26px;font-weight:800}.money.in{color:var(--green)}.money.out{color:var(--red)}.money.balance{color:var(--blue)}.finance-form{display:grid;grid-template-columns:110px 1fr 120px auto;gap:8px;align-items:end}.transactions{max-height:210px;overflow:auto}.transaction{display:flex;justify-content:space-between;border-bottom:1px solid #29423899;padding:11px 0;font-size:12px}.transaction small{display:block;color:var(--muted);margin-top:3px}.empty{color:var(--muted);font-size:12px;padding:13px 0}.toast{position:fixed;right:22px;bottom:22px;background:#eaf7ee;color:#102419;padding:13px 17px;border-radius:12px;box-shadow:var(--shadow);font-size:12px;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s}.toast.show{transform:none;opacity:1}.modal{position:fixed;inset:0;background:#07100bd9;display:none;place-items:center;padding:20px;z-index:5}.modal.open{display:grid}.modal-card{background:#18281f;border:1px solid var(--line);border-radius:18px;padding:24px;width:min(500px,100%)}.modal-card h2{margin:0 0 6px}.modal-card p{color:var(--muted);font-size:12px;line-height:1.6}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:18px}.config-grid{display:grid;gap:12px}.config-grid small{color:var(--muted);font-size:10px}
+    @media(max-width:1050px){.metrics{grid-template-columns:repeat(2,1fr)}.finance-grid{grid-template-columns:1fr}}@media(max-width:760px){.shell{display:block}.sidebar{border-right:0;border-bottom:1px solid var(--line);padding:15px;gap:13px}.nav{display:flex;overflow:auto}.nav button{white-space:nowrap;padding:9px 10px}.nav button span{display:none}.side-note{display:none}main{padding:23px 14px}.topbar{display:block}.actions{margin-top:17px}.main-grid{grid-template-columns:1fr}.relay-grid{grid-template-columns:1fr}.finance-form{grid-template-columns:1fr 1fr}.finance-form .wide{grid-column:1/-1}.form-row{flex-wrap:wrap}.form-row .field{min-width:120px}}
+  </style>
 </head>
-
 <body>
-
-<header>🌱 SMART FARM FINANCE AI</header>
-
-<div class="container">
-
-<!-- INPUT -->
-<div class="card">
-<h3>เพิ่มรายการ</h3>
-
-<select id="type">
-<option value="income">รายรับ</option>
-<option value="expense">รายจ่าย</option>
-</select>
-
-<input id="amount" type="number" placeholder="จำนวนเงิน">
-<input id="note" placeholder="หมายเหตุ">
-
-<button onclick="add()">บันทึก</button>
-</div>
-
-<!-- SUMMARY -->
-<div class="card">
-<h3>สรุป</h3>
-<div>รายรับ: <span id="income">0</span></div>
-<div>รายจ่าย: <span id="expense">0</span></div>
-<div>คงเหลือ: <span id="balance">0</span></div>
-</div>
-
-<!-- AI -->
-<div class="card">
-<h3>🤖 AI วิเคราะห์</h3>
-<div id="ai" class="ai">-</div>
-</div>
-
-<!-- LIST -->
-<div class="card">
-<h3>รายการ</h3>
-<div id="list"></div>
-</div>
-
-</div>
-
-<script>
-
-// ================= FIREBASE =================
-const firebaseConfig = {
-  databaseURL: "https://smart-farm-platfor-default-rtdb.asia-southeast1.firebasedatabase.app"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-
-// ================= ADD =================
-function add(){
-
-    const type = document.getElementById("type").value;
-    const amount = Number(document.getElementById("amount").value);
-    const note = document.getElementById("note").value;
-
-    if(!amount) return;
-
-    const id = Date.now();
-
-    db.ref("finance/" + id).set({
-        id,
-        type,
-        amount,
-        note,
-        time: Date.now()
-    });
-
-    document.getElementById("amount").value = "";
-    document.getElementById("note").value = "";
-}
-
-// ================= AI =================
-function financeAI(income, expense){
-
-    let balance = income - expense;
-
-    if(balance < 0){
-        return "⚠️ ขาดทุน ควรลดรายจ่าย";
-    }
-    if(balance < 500){
-        return "⚠️ กำไรต่ำ ควบคุมต้นทุน";
-    }
-    return "✅ สถานะฟาร์มดี";
-}
-
-// ================= REALTIME =================
-db.ref("finance").on("value", snap => {
-
-    const data = snap.val() || {};
-
-    let income = 0;
-    let expense = 0;
-    let html = "";
-
-    Object.values(data).forEach(d => {
-
-        if(d.type === "income") income += d.amount;
-        if(d.type === "expense") expense += d.amount;
-
-        html += `
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand"><div class="logo">✦</div><div><strong>SMART FARM</strong><small>FIELD OPERATING SYSTEM</small></div></div>
+      <nav class="nav" aria-label="เมนูหลัก"><button class="active" data-section="overview">◈ <span>ภาพรวมฟาร์ม</span></button><button data-section="control">⌁ <span>ควบคุมอุปกรณ์</span></button><button data-section="finance">▤ <span>การเงิน</span></button><button data-section="system">◌ <span>ระบบ</span></button></nav>
+      <div class="side-note"><b>CONTRACT / V1.0</b>MQTT namespace และ payload ถูกล็อกตามสัญญา เพื่อให้ Firmware และ Dashboard อัปเดตแยกกันได้</div>
+    </aside>
+    <main>
+      <header class="topbar"><div><div class="eyebrow">Thursday · 10 September 2026</div><h1>สวัสดี, ผู้ดูแลฟาร์ม</h1><p>ภาพรวมการทำงานแบบ real-time จาก ESP8266 และข้อมูลถาวรจาก Firebase</p></div><div class="actions"><div class="status-pill"><i class="dot" id="connectionDot"></i><span id="connectionText">Demo mode</span></div><button class="ghost" id="configBtn">ตั้งค่า</button></div></header>
+      <section class="grid metrics" id="overview"><div class="panel metric"><div class="label">อุณหภูมิ <span>◒</span></div><div class="value" id="temp">31.5°</div><div class="meta" id="sensorTime">อัปเดตเมื่อสักครู่</div></div><div class="panel metric"><div class="label">ความชื้น <span>◌</span></div><div class="value" id="humidity">72%</div><div class="meta">DHT11 · normal range</div></div><div class="panel metric"><div class="label">สถานะอุปกรณ์ <span>●</span></div><div class="value accent" id="deviceState">Online</div><div class="meta" id="deviceMeta">esp8266-01 · RSSI -61 dBm</div></div><div class="panel metric"><div class="label">โหมดการทำงาน <span>↻</span></div><div class="value warning" id="modeValue">MANUAL</div><div class="meta">รายงานจาก ESP8266</div></div></section>
+      <div class="grid main-grid">
         <div>
-        ${d.type} | ${d.amount} | ${d.note || "-"}
-        </div>`;
-    });
-
-    let balance = income - expense;
-
-    document.getElementById("income").innerText = income;
-    document.getElementById("expense").innerText = expense;
-    document.getElementById("balance").innerText = balance;
-
-    document.getElementById("ai").innerText = financeAI(income, expense);
-
-    document.getElementById("list").innerHTML = html;
-});
-
+          <section class="panel" id="control"><div class="section-title"><h2>ควบคุมอุปกรณ์</h2><span id="reportedState">REPORTED STATE</span></div><div class="grid relay-grid" id="relayGrid"></div></section>
+          <section class="panel schedule"><div class="section-title"><h2>ตารางรดน้ำ</h2><span id="scheduleState">RETAINED STATUS</span></div><div class="form-row"><div class="field"><label for="scheduleOn">เวลาเปิด</label><input id="scheduleOn" type="time" value="06:00" /></div><div class="field"><label for="scheduleOff">เวลาปิด</label><input id="scheduleOff" type="time" value="07:00" /></div><button class="primary" id="saveSchedule">บันทึกตาราง</button></div></section>
+        </div>
+        <div class="side-stack">
+          <section class="panel"><div class="section-title"><h2>สุขภาพอุปกรณ์</h2><span>DEVICE STATUS</span></div><div class="device-row"><span class="key">Device ID</span><span class="device-value">esp8266-01</span></div><div class="device-row"><span class="key">Firmware</span><span class="device-value">v1.0.0</span></div><div class="device-row"><span class="key">Uptime</span><span class="device-value">14d 06h 21m</span></div><div class="device-row"><span class="key">MQTT</span><span class="device-value accent">Connected</span></div></section>
+          <section class="panel"><div class="section-title"><h2>Sensor DHT11</h2><span id="dhtTimestamp">12:30:00 ICT</span></div><div class="sensor-grid"><div><div class="big-read" id="tempSmall">31.5°</div><div class="sensor-unit">TEMPERATURE / °C</div></div><div><div class="big-read" id="humiditySmall">72%</div><div class="sensor-unit">HUMIDITY / %</div></div></div></section>
+          <section class="panel"><div class="section-title"><h2>โหมดระบบ</h2><span>MQTT CONTROL</span></div><div class="form-row"><div class="field"><label for="modeSelect">เลือกโหมด</label><select id="modeSelect"><option>MANUAL</option><option>AUTO</option></select></div><button class="primary" id="saveMode">ยืนยันโหมด</button></div></section>
+        </div>
+      </div>
+      <section class="panel finance" id="finance"><div class="section-title"><h2>การเงินฟาร์ม</h2><span>FIREBASE PERSISTENT DATA</span></div><div class="finance-grid"><div><div class="grid metrics" style="grid-template-columns:repeat(3,1fr);gap:9px;margin:0 0 16px"><div><div class="key">รายรับ</div><div class="money in" id="income">฿0</div></div><div><div class="key">รายจ่าย</div><div class="money out" id="expense">฿0</div></div><div><div class="key">คงเหลือ</div><div class="money balance" id="balance">฿0</div></div></div><div class="finance-row"><span class="key">AI วิเคราะห์ต้นทุน</span><span class="accent" id="financeAi">เพิ่มรายการเพื่อเริ่มวิเคราะห์</span></div></div><div><div class="finance-form"><select id="financeType"><option value="income">รายรับ</option><option value="expense">รายจ่าย</option></select><input class="wide" id="financeNote" placeholder="รายละเอียดรายการ" maxlength="100" /><input id="financeAmount" type="number" min="0" step="0.01" placeholder="จำนวนเงิน" /><button class="primary" id="addFinance">บันทึก</button></div><div class="transactions" id="transactions"><div class="empty">ยังไม่มีรายการ — ข้อมูลจะถูกเก็บใน Firebase เมื่อมีการตั้งค่า</div></div></div></div></section>
+      <section class="panel" id="system" style="margin-top:16px"><div class="section-title"><h2>System events</h2><span>smartfarm/system/error</span></div><div class="device-row"><span class="key">สถานะการเชื่อมต่อ</span><span class="device-value" id="eventText">ยังไม่ได้เชื่อมต่อ MQTT จริง — แสดง Demo data</span></div></section>
+    </main>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <div class="modal" id="configModal"><div class="modal-card"><h2>การเชื่อมต่อ</h2><p>โหมด Demo จะทำงานทันทีโดยไม่ใช้ secret ใด ๆ หากต้องการเชื่อมต่อจริง ให้ตั้งค่า WebSocket URL ของ MQTT Broker ที่รองรับ TLS เช่น <b>wss://broker.example.com:8084/mqtt</b> ใน <code>window.SMART_FARM_CONFIG</code> ก่อนโหลดหน้าเว็บ</p><div class="config-grid"><div><label class="key">MQTT WebSocket URL (ไม่บันทึกในฐานข้อมูล)</label><input id="mqttUrl" placeholder="wss://your-broker:8084/mqtt" /></div><small>ห้ามใส่ password, token หรือ Firebase secret ใน source code หรือ MQTT payload</small></div><div class="modal-actions"><button class="ghost" id="closeConfig">ยกเลิก</button><button class="primary" id="connectMqtt">เชื่อมต่อ</button></div></div></div>
+<script>
+/* Smart Farm MQTT Contract V1.0 — client-side adapter. Secrets must be injected by a secure deployment config. */
+const TOPICS={relay:{pump:['smartfarm/relay/pump/set','smartfarm/relay/pump/status'],zone1:['smartfarm/relay/zone1/set','smartfarm/relay/zone1/status'],lighthome:['smartfarm/relay/lighthome/set','smartfarm/relay/lighthome/status'],lightsala:['smartfarm/relay/lightsala/set','smartfarm/relay/lightsala/status']},mode:['smartfarm/mode/set','smartfarm/mode/status'],schedule:['smartfarm/schedule/pump/set','smartfarm/schedule/pump/status'],online:'smartfarm/status/online',device:'smartfarm/status/device',sensor:'smartfarm/sensor/dht11',time:'smartfarm/time',error:'smartfarm/system/error'};
+const labels={pump:'Pump',zone1:'Zone 1',lighthome:'Light Home',lightsala:'Light Sala'}; const state={relays:{pump:'OFF',zone1:'OFF',lighthome:'OFF',lightsala:'OFF'},pending:{},mode:'MANUAL',online:true,finance:JSON.parse(localStorage.getItem('smartfarm-finance')||'[]')}; let mqttClient=null;
+const $=id=>document.getElementById(id); const money=n=>new Intl.NumberFormat('th-TH',{style:'currency',currency:'THB',maximumFractionDigits:0}).format(n); function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),2800)}
+function renderRelays(){ $('relayGrid').innerHTML=Object.entries(labels).map(([key,label])=>`<div class="relay"><div><h3>${label}</h3><p>smartfarm/relay/${key}/status</p>${state.pending[key]?'<span class="pending">รอยืนยันจาก ESP8266…</span>':''}</div><button class="switch ${state.relays[key]==='ON'?'on':''}" aria-label="เปิดปิด ${label}" ${state.pending[key]||!state.online?'disabled':''} data-relay="${key}"><i></i></button></div>`).join(''); document.querySelectorAll('[data-relay]').forEach(b=>b.onclick=()=>setRelay(b.dataset.relay,state.relays[b.dataset.relay]==='ON'?'OFF':'ON')); }
+function setRelay(key,value){state.pending[key]=true;renderRelays(); publish(TOPICS.relay[key][0],value); if(!mqttClient){setTimeout(()=>{state.relays[key]=value;state.pending[key]=false;renderRelays();toast(`${labels[key]} ยืนยันสถานะ ${value} (Demo)`);},650)}}
+function publish(topic,payload){if(mqttClient?.connected){mqttClient.publish(topic,typeof payload==='string'?payload:JSON.stringify(payload),{qos:1,retain:false});$('eventText').textContent=`ส่งคำสั่ง ${topic} แล้ว — รอ status acknowledgement`; } else {toast('Demo mode: ยังไม่ได้เชื่อมต่อ MQTT จริง');}}
+function setConnection(online,text){state.online=online;$('connectionText').textContent=text;$('connectionDot').className=`dot ${online?'online':'offline'}`;$('deviceState').textContent=online?'Online':'Offline';renderRelays()}
+function handleMessage(topic,raw){try{let payload=raw.toString();if(topic.includes('/relay/')&&topic.endsWith('/status')){let key=Object.keys(TOPICS.relay).find(k=>TOPICS.relay[k][1]===topic);if(key&&(payload==='ON'||payload==='OFF')){state.relays[key]=payload;state.pending[key]=false;renderRelays()}}else if(topic===TOPICS.mode[1]&&(payload==='AUTO'||payload==='MANUAL')){$('modeValue').textContent=payload;state.mode=payload}else if(topic===TOPICS.online){setConnection(payload==='true',payload==='true'?'MQTT connected':'Device offline')}else if(topic===TOPICS.sensor){const d=JSON.parse(payload);if(typeof d.temperature!=='number'||typeof d.humidity!=='number')throw Error('Invalid sensor types');updateSensor(d)}else if(topic===TOPICS.device){const d=JSON.parse(payload);$('deviceMeta').textContent=`${d.device_id||d.deviceId||'esp8266'} · RSSI ${d.rssi??'—'} dBm`}}catch(e){$('eventText').textContent='INVALID_JSON: ไม่สามารถอ่านข้อมูลจากอุปกรณ์ได้'}}
+function updateSensor(d){$('temp').textContent=`${d.temperature.toFixed(1)}°`;$('tempSmall').textContent=`${d.temperature.toFixed(1)}°`;$('humidity').textContent=`${d.humidity.toFixed(0)}%`;$('humiditySmall').textContent=`${d.humidity.toFixed(0)}%`;$('sensorTime').textContent=d.timestamp?new Date(d.timestamp).toLocaleTimeString('th-TH'):'อัปเดตเมื่อสักครู่';$('dhtTimestamp').textContent=$('sensorTime').textContent}
+function connectMqtt(url){if(!window.mqtt){toast('ไม่พบ MQTT client library');return}try{mqttClient=mqtt.connect(url,{clientId:`smartfarm-dashboard-${Date.now()}`,clean:true,reconnectPeriod:3000});mqttClient.on('connect',()=>{setConnection(true,'MQTT connected');Object.values(TOPICS.relay).forEach(t=>mqttClient.subscribe(t[1],{qos:1}));[TOPICS.mode[1],TOPICS.online,TOPICS.device,TOPICS.sensor,TOPICS.schedule[1],TOPICS.time,TOPICS.error].forEach(t=>mqttClient.subscribe(t,{qos:1}));toast('เชื่อมต่อ MQTT สำเร็จ')});mqttClient.on('message',handleMessage);mqttClient.on('offline',()=>setConnection(false,'MQTT offline'));mqttClient.on('error',()=>{setConnection(false,'MQTT error');$('eventText').textContent='MQTT_FAILED: ตรวจสอบ Broker และ TLS WebSocket URL'})}catch(e){toast('URL ไม่ถูกต้อง');setConnection(false,'MQTT error')}}
+function renderFinance(){let inc=state.finance.filter(x=>x.type==='income').reduce((a,x)=>a+x.amount,0),exp=state.finance.filter(x=>x.type==='expense').reduce((a,x)=>a+x.amount,0);$('income').textContent=money(inc);$('expense').textContent=money(exp);$('balance').textContent=money(inc-exp);$('financeAi').textContent=inc-exp<0?'ขาดทุน — ควรลดรายจ่าย':inc-exp<500?'กำไรต่ำ — ควบคุมต้นทุน':'สถานะฟาร์มดี';$('transactions').innerHTML=state.finance.length?state.finance.slice().reverse().map(x=>`<div class="transaction"><span>${x.note||'ไม่ระบุ'}<small>${x.type==='income'?'รายรับ':'รายจ่าย'} · ${new Date(x.time).toLocaleDateString('th-TH')}</small></span><b class="${x.type==='income'?'accent':''}">${x.type==='income'?'+':'-'}${money(x.amount)}</b></div>`).join(''):'<div class="empty">ยังไม่มีรายการ</div>'}
+$('addFinance').onclick=()=>{const amount=Number($('financeAmount').value),note=$('financeNote').value.trim();if(!Number.isFinite(amount)||amount<0){toast('กรุณาระบุจำนวนเงินที่ถูกต้อง');return}state.finance.push({id:Date.now(),type:$('financeType').value,amount,note,time:Date.now()});localStorage.setItem('smartfarm-finance',JSON.stringify(state.finance));$('financeAmount').value='';$('financeNote').value='';renderFinance();toast('บันทึกรายการแล้ว')};
+$('saveMode').onclick=()=>{const m=$('modeSelect').value;publish(TOPICS.mode[0],m);if(!mqttClient){state.mode=m;$('modeValue').textContent=m;toast(`โหมด ${m} ถูกตั้งค่า (Demo)`)}else toast('ส่งโหมดแล้ว — รอ status acknowledgement')}; $('saveSchedule').onclick=()=>{const on=$('scheduleOn').value,off=$('scheduleOff').value;if(!on||!off){toast('กรุณาเลือกเวลาให้ครบ');return}publish(TOPICS.schedule[0],{enabled:true,on,off});$('scheduleState').textContent=`ส่งแล้ว · ${on}—${off}`;toast('ส่งตารางแล้ว — รอ ESP ยืนยัน')};
+$('configBtn').onclick=()=>{$('configModal').classList.add('open');$('mqttUrl').value=window.SMART_FARM_CONFIG?.mqttUrl||''};$('closeConfig').onclick=()=>$('configModal').classList.remove('open');$('connectMqtt').onclick=()=>{const url=$('mqttUrl').value.trim();$('configModal').classList.remove('open');if(url)connectMqtt(url);else toast('ยังคงใช้ Demo mode')}; document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');$(b.dataset.section)?.scrollIntoView({behavior:'smooth'})});
+updateSensor({temperature:31.5,humidity:72,timestamp:'2026-09-10T12:30:00+07:00'});renderRelays();renderFinance();
+if(window.SMART_FARM_CONFIG?.mqttUrl)connectMqtt(window.SMART_FARM_CONFIG.mqttUrl);
 </script>
-
-</body>
-</html>
+</body></html>
